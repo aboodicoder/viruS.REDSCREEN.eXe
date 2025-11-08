@@ -122,4 +122,165 @@
   button{background:transparent;border:2px solid rgba(255,255,255,0.06);color:var(--pale);padding:10px 14px;border-radius:6px;cursor:pointer;font-family:inherit}
   kbd{background:#111;color:#ffdede;border-radius:4px;padding:2px 6px;font-size:12px;border:1px solid rgba(255,255,255,0.04)}
 
-  /* small responsive tweaks *
+  /* small responsive tweaks */
+  @media (max-width:820px){
+    .lock{width:120px;height:120px;flex:0 0 120px}
+    .huge{font-size:28px}
+    .filecount{font-size:42px}
+    .gibberish{height:420px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap" role="document">
+    <div class="backdrop" aria-hidden="true"></div>
+
+    <div class="container scanlines" role="main" aria-labelledby="mainTitle">
+      <div class="toprow">
+        <div>
+          <h1 id="mainTitle" class="title glitch" data-text="SYSTEM ALERT — IMMEDIATE">SYSTEM ALERT — IMMEDIATE</h1>
+          <p class="sub">This demo is visual-only. Scroll down to the bottom to reveal the harmless message.</p>
+        </div>
+      </div>
+
+      <div class="main" role="region" aria-label="Threat display">
+        <div class="lock" aria-hidden="true">
+          <!-- stylized lock -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3.5" y="9" width="17" height="11" rx="2.5" stroke="currentColor"/>
+            <path d="M8 9V6.8C8 4.2 10.2 2 12.8 2S17.6 4.2 17.6 6.8V9" stroke="currentColor"/>
+            <circle cx="12" cy="14.5" r="1.6" fill="currentColor"/>
+          </svg>
+        </div>
+
+        <div class="message">
+          <div class="huge glitch" data-text="YOUR FILES ARE ENCRYPTED">YOUR FILES ARE ENCRYPTED</div>
+          <div class="subline">All sensitive data has been locked. System tag: <strong>DEMO-0xEXTREME</strong></div>
+          <div id="fileCount" class="filecount">Locked: 0</div>
+          <div style="display:flex;gap:10px;align-items:center;justify-content:flex-start;">
+            <div class="controls">
+              <button id="revealBtn">Reveal now</button>
+              <button id="holdBtn">Hold demo</button>
+            </div>
+            <div style="margin-left:16px;color:var(--muted);font-size:13px">Tip: Press <kbd>Esc</kbd> or scroll all the way to the bottom.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- massive gibberish to force scrolling; also looks 'hex-y' -->
+      <div id="gibberish" class="gibberish" aria-hidden="true"></div>
+
+      <div id="revealPanel" class="reveal" role="status" aria-live="polite">
+        <h2 style="margin:0 0 8px">🎉 Peace — Harmless Demo!</h2>
+        <p style="margin:0 0 8px">This page does not encrypt files, request money, or change anything on your computer. It is a theatrical, local-only demo for fun.</p>
+        <p style="margin:0;color:#bfe5c9">If you need me to tone it up/down, swap the lock graphic, or change how the disclaimer looks — say the word.</p>
+      </div>
+
+    </div>
+
+    <!-- spacer to make sure you MUST scroll -->
+    <div style="height:900px;min-height:60vh"></div>
+
+    <!-- fixed bottom disclaimer (readable but bottom-placed) -->
+    <div class="bottom-disclaimer" role="note" aria-live="polite">
+      <strong>PRANK / DEMO — NOT REAL</strong>
+      <small>This is a theatrical visual demo only. It does NOT encrypt, delete, or lock files. Make sure the person seeing this understands it's a harmless demo.</small>
+    </div>
+  </div>
+
+<script>
+  // fill gibberish with a mix of random ascii + hex-like blocks and a few long lines
+  (function makeGibberish(){
+    const el = document.getElementById('gibberish');
+    const chars = "!@#$%^&*()_+[]{};:,.<>?/|\\~=-abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const out = [];
+    // create some header lines that look "technical"
+    out.push(">> INIT: DEMO RENDER PIPELINE START");
+    out.push(">> LOADING MODULE: visually_intense_renderer v2.7");
+    out.push(">> SUBSYSTEM: encryption-mock (read-only)");
+    out.push("");
+    // add many random lines
+    for (let i=0;i<1600;i++){
+      if (Math.random() < 0.02) {
+        // hex block
+        let block = "";
+        for (let j=0;j<8;j++) block += Math.floor(Math.random()*0xFFFFFFFF).toString(16).padStart(8,'0') + " ";
+        out.push(block);
+      } else {
+        let len = 70 + Math.floor(Math.random()*80);
+        let line = "";
+        for (let j=0;j<len;j++) line += chars.charAt(Math.floor(Math.random()*chars.length));
+        out.push(line);
+      }
+    }
+    // a couple of long "red" style lines
+    out.push("");
+    out.push("!!! SYSTEM: CRITICAL VISUAL STATE REACHED !!!");
+    el.textContent = out.join("\n");
+  })();
+
+  // dramatic fake file counter
+  const cntEl = document.getElementById('fileCount');
+  let files = 0;
+  const incr = setInterval(()=>{
+    const add = Math.floor(Math.random()*120);
+    files += add;
+    if (files > 1234567) files = 1234567;
+    cntEl.textContent = "Locked: " + files.toLocaleString();
+    // occasional big glitch jump
+    if (Math.random() < 0.07) {
+      files += 500 + Math.floor(Math.random()*2000);
+    }
+    if (files >= 1234567) clearInterval(incr);
+  }, 420);
+
+  // reveal behaviors: Esc, scroll to bottom, or button
+  const revealPanel = document.getElementById('revealPanel');
+  function reveal(reason){
+    if (revealPanel.style.display === 'block') return;
+    revealPanel.style.display = 'block';
+    revealPanel.scrollIntoView({behavior:'smooth', block:'center'});
+    // small celebratory burst
+    for (let i=0;i<40;i++){
+      const e = document.createElement('div');
+      e.textContent = ['🎉','✨','💚'][Math.floor(Math.random()*3)];
+      e.style.position='fixed';
+      e.style.left = (Math.random()*70+15) + '%';
+      e.style.top = (Math.random()*70+10) + '%';
+      e.style.fontSize = (12 + Math.random()*42) + 'px';
+      e.style.opacity = Math.random();
+      e.style.zIndex = 10001;
+      document.body.appendChild(e);
+      setTimeout(()=>e.remove(),2600);
+    }
+  }
+
+  document.getElementById('revealBtn').addEventListener('click', ()=> reveal('manual'));
+  document.getElementById('holdBtn').addEventListener('click', ()=> alert('Demo will continue. Scroll to bottom or press Esc to reveal.'));
+
+  window.addEventListener('keydown', (e)=> { if (e.key === 'Escape') reveal('esc'); });
+
+  window.addEventListener('scroll', ()=>{
+    const atBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 8);
+    if (atBottom) reveal('scrolled');
+  });
+
+  // small randomized screen flicker for extra menace (visual only)
+  (function flickerLoop(){
+    const body = document.body;
+    function flick(){
+      const d = Math.random();
+      if (d < 0.12) {
+        body.style.filter = 'brightness(1.25) saturate(1.1)';
+        setTimeout(()=>body.style.filter='none', 90 + Math.random()*120);
+      } else if (d < 0.18) {
+        body.style.filter = 'hue-rotate(12deg) contrast(1.05)';
+        setTimeout(()=>body.style.filter='none', 140 + Math.random()*160);
+      }
+      setTimeout(flick, 400 + Math.random()*1200);
+    }
+    flick();
+  })();
+</script>
+</body>
+</html>

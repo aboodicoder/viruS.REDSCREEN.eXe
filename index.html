@@ -53,7 +53,7 @@ body {
 <body>
 
 <div id="goose">
-  <img id="gooseImg" src="https://upload.wikimedia.org/wikipedia/commons/4/45/Cartoon_goose.svg" alt="goose">
+  <img id="gooseImg" src="https://upload.wikimedia.org/wikipedia/commons/8/88/Cartoon_goose.svg" alt="goose">
 </div>
 <div id="cursor"></div>
 
@@ -100,7 +100,6 @@ function moveGoose(){
   const dt = now - lastMouseTime;
   const speed = Math.sqrt((mouseX - lastMouseX)**2 + (mouseY - lastMouseY)**2)/(dt||1);
 
-  // Sad if moving too fast
   if(!hugging){
     if(speed>2.5){
       gooseImg.style.filter='brightness(0.8) sepia(0.5)';
@@ -110,9 +109,10 @@ function moveGoose(){
       gooseImg.style.transform='';
     }
 
+    // Slow movement: smaller factor
     if(dist>10){
-      gooseX += dx*0.05;
-      gooseY += dy*0.05;
+      gooseX += dx*0.025; // slower
+      gooseY += dy*0.025;
     }
 
     if(dist<50) startHug();
